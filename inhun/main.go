@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/inhun/GoropBox/auth"
 	"github.com/inhun/GoropBox/config"
 	"github.com/inhun/GoropBox/endpoints"
 
@@ -16,7 +17,10 @@ import (
 )
 
 func main() {
+
 	cfg, _ := config.LoadConfig("config.json")
+
+	auth.A(*cfg)
 
 	DBUrl := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d TimeZone=%s", cfg.DB.Host, cfg.DB.User, cfg.DB.Password, cfg.DB.DBName, cfg.DB.Port, cfg.DB.TimeZone)
 

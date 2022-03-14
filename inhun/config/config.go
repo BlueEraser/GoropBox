@@ -18,9 +18,18 @@ type ServerConfig struct {
 	Port int `json:"port"`
 }
 
+type GoogleConfig struct {
+	ClientID     string `json:"client_id"`
+	ClientSecret string `json:"client_secret"`
+	AuthUrl      string `json:"auth_url"`
+	TokenUrl     string `json:"token_url"`
+	RedirectUrl  string `json:"redirect_url"`
+}
+
 type Config struct {
 	DB     DBConfig     `json:"db"`
 	Server ServerConfig `json:"server"`
+	Google GoogleConfig `json:"google"`
 }
 
 func LoadConfig(filepath string) (*Config, error) {
