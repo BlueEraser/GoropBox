@@ -1,12 +1,25 @@
 package main
 
 import (
-	"fmt"
+	"net/http"
 
 	"gorop-box/services"
+
+	"github.com/labstack/echo/v4"
 )
 
 func main() {
-	user := services.CreateUser("jshong0907@google.com", "1234qwer", "준식홍")
-	fmt.Println(user.CheckPassword("1234qwer"))
+	e := echo.New()
+	e.POST("/signup", func(c echo.Context) error {
+		params := make(map[string]string)
+		c.Bind(&params)
+		user := services.CreateUser(
+			params["email"],
+			params["password"],
+			params["nickName"],
+		)
+
+		return c.JSON(http.StatusOK, user)
+	})
+	e.Logger.Fatal(e.Start(":1323"))
 }

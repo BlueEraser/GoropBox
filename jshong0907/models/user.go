@@ -7,9 +7,9 @@ import (
 
 type User struct {
 	gorm.Model
-	Email    string `gorm:"not null;uniqueIndex;comment:이메일"`
-	Password string `gorm:"not null;comment:비밀번호"`
-	NickName string `gorm:"not null;comment:닉네임"`
+	Email    string `gorm:"not null;uniqueIndex;comment:이메일" json:"email"`
+	Password string `gorm:"not null;comment:비밀번호" json:"-"`
+	NickName string `gorm:"not null;comment:닉네임" json"nickName"`
 }
 
 func (user User) CheckPassword(password string) bool {
