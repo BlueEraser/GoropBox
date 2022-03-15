@@ -23,7 +23,7 @@ func main() {
 	e.POST("/signin", func(c echo.Context) error {
 		params := make(map[string]string)
 		c.Bind(&params)
-		user, err := services.Signin(params["email"], params["password"])
+		user, err := services.CheckPassword(params["email"], params["password"])
 
 		if err != nil {
 			return echo.ErrUnauthorized

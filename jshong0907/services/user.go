@@ -12,11 +12,11 @@ func CreateUser(email, password, nickName string) models.User {
 	return user
 }
 
-func Signin(email, password string) (models.User, error) {
+func CheckPassword(email, password string) (models.User, error) {
 	var user models.User
 	DB.Where("email = ?", email).Find(&user)
 	if user.CheckPassword(password) {
 		return user, nil
 	}
-	return user, &errors.InvalidPaswordError{}
+	return user, &errors.InvalidPasswordError{}
 }

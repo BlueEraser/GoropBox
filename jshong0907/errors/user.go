@@ -1,7 +1,7 @@
 package errors
 
-type InvalidPaswordError struct{}
+type InvalidPasswordError struct{}
 
-func (m *InvalidPaswordError) Error() string {
+func (m *InvalidPasswordError) Error() string {
 	return "Invalid Password Error!"
 }

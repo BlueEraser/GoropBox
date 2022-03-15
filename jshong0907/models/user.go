@@ -9,7 +9,7 @@ type User struct {
 	gorm.Model
 	Email    string `gorm:"not null;uniqueIndex;comment:이메일" json:"email"`
 	Password string `gorm:"not null;comment:비밀번호" json:"-"`
-	NickName string `gorm:"not null;comment:닉네임" json"nickName"`
+	NickName string `gorm:"not null;comment:닉네임" json:"nickName"`
 }
 
 func (user User) CheckPassword(password string) bool {
@@ -18,9 +18,9 @@ func (user User) CheckPassword(password string) bool {
 }
 
 func (user *User) SetPassword(password string) bool {
-	hashed_password, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err == nil {
-		user.Password = string(hashed_password)
+		user.Password = string(hashedPassword)
 		return true
 	}
 	return false
