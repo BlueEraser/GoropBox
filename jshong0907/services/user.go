@@ -12,6 +12,12 @@ func CreateUser(email, password, nickName string) models.User {
 	return user
 }
 
+func GetUserByEmail(email string) models.User {
+	var user models.User
+	DB.Where("email = ?", email).Find(&user)
+	return user
+}
+
 func CheckPassword(email, password string) (models.User, error) {
 	var user models.User
 	DB.Where("email = ?", email).Find(&user)
