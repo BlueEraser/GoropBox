@@ -1,9 +1,9 @@
 package auth
 
 import (
-	"crypto/rand"
-	"encoding/base64"
+	"context"
 	"fmt"
+	"log"
 
 	"github.com/inhun/GoropBox/config"
 
@@ -22,13 +22,22 @@ func A(cfg config.Config) {
 		},
 	}
 
-	url := OauthConf.AuthCodeURL("state", oauth2.AccessTypeOffline)
-	fmt.Printf("%v", url)
+	url := OauthConf.AuthCodeURL("state", oauth2.AccessTypeOnline)
+	fmt.Printf("%v\n", url)
 
-	b := make([]byte, 32)
-	rand.Read(b)
-	state := base64.StdEncoding.EncodeToString((b))
-	fmt.Println(state)
+	var code string
+	if _, err := fmt.Scan(&code); err != nil {
+		log.Fatal(err)
+	}
 
-	fmt.Println(OauthConf.AuthCodeURL(state))
+	ctx := context.Background()
+	tok, err := OauthConf.Exchange(ctx, code)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(tok)
+	client := OauthConf.Client(ctx, tok)
+
+	fmt.Println(client)
+
 }

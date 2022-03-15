@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/inhun/GoropBox/auth"
 	"github.com/inhun/GoropBox/config"
 	"github.com/inhun/GoropBox/endpoints"
 
@@ -14,13 +13,24 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/rs/cors"
+
+	"golang.org/x/oauth2"
 )
 
 func main() {
 
 	cfg, _ := config.LoadConfig("config.json")
 
-	auth.A(*cfg)
+	var OauthConf = &oauth2.Config{
+		ClientID:     cfg.Google.ClientID,
+		ClientSecret: cfg.Google.ClientSecret,
+		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"},
+		RedirectURL:  cfg.Google.RedirectUrl,
+		Endpoint: oauth2.Endpoint{
+			TokenURL: cfg.Google.TokenUrl,
+			AuthURL:  cfg.Google.AuthUrl,
+		},
+	}
 
 	DBUrl := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d TimeZone=%s", cfg.DB.Host, cfg.DB.User, cfg.DB.Password, cfg.DB.DBName, cfg.DB.Port, cfg.DB.TimeZone)
 
@@ -31,7 +41,10 @@ func main() {
 	sqlDB, err := db.DB()
 	defer sqlDB.Close()
 
-	ep := endpoints.Endpoints{DB: db}
+	ep := endpoints.Endpoints{
+		DB:    db,
+		Oauth: OauthConf,
+	}
 
 	// db.AutoMigrate(&models.User{})
 	// db.Create(&models.User{Email: "inhun321@khu.ac.kr", Password: "test"})
@@ -39,6 +52,9 @@ func main() {
 	router := httprouter.New()
 
 	router.GET("/api/user", ep.GetUserList)
+	router.GET("/api/oauth2", ep.Test)
+	router.POST("/api/signin", ep.Signin)
+	router.GET("/login/oauth2/code/google", ep.Signin)
 
 	handler := cors.AllowAll().Handler(router)
 	log.Fatal(http.ListenAndServe(":"+"8000", handler))
