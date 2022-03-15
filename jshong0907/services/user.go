@@ -1,6 +1,7 @@
 package services
 
 import (
+	"gorop-box/errors"
 	"gorop-box/models"
 )
 
@@ -9,4 +10,13 @@ func CreateUser(email, password, nickName string) models.User {
 	user.SetPassword(password)
 	DB.Create(&user)
 	return user
+}
+
+func Signin(email, password string) (models.User, error) {
+	var user models.User
+	DB.Where("email = ?", email).Find(&user)
+	if user.CheckPassword(password) {
+		return user, nil
+	}
+	return user, &errors.InvalidPaswordError{}
 }
