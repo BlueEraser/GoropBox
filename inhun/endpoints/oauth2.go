@@ -1,7 +1,6 @@
 package endpoints
 
 import (
-	"fmt"
 	"net/http"
 
 	ihttp "github.com/inhun/GoropBox/internal/http"
@@ -9,10 +8,9 @@ import (
 	"golang.org/x/oauth2"
 )
 
-func (e *Endpoints) Test(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (e *Endpoints) Oauth2Google(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
-	url := e.Oauth.AuthCodeURL("state", oauth2.AccessTypeOffline)
-	fmt.Printf("%v\n", url)
+	url := e.Oauth.AuthCodeURL("state", oauth2.AccessTypeOffline, oauth2.ApprovalForce)
 
 	ihttp.ResponseOK(w, "success", url)
 	return
