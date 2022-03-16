@@ -1,0 +1,20 @@
+{
+    "db": {
+        "host": "{}",
+        "user": "{}",
+        "password": "{}",
+        "db_name": "{}",
+        "port": 5432,
+        "timezone": "{}"
+    },
+    "server": {
+        "port": 8000
+    },
+    "google": {
+        "client_id": "{}",
+        "client_secret": "{}",
+        "auth_url": "{}",
+        "token_url": "{}",
+        "redirect_url": "{}"
+    }
+}

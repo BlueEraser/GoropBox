@@ -1,36 +1,25 @@
 package main
 
 import (
-	"fmt"
+	"net/http"
 
-	"github.com/jshong0907/GoropBox/jshong0907/models"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"gorop-box/services"
+
+	"github.com/labstack/echo/v4"
 )
 
 func main() {
-	dsn := "host=127.0.0.1 user=hong dbname=GoropBox"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect database")
-	}
+	e := echo.New()
+	e.POST("/signup", func(c echo.Context) error {
+		params := make(map[string]string)
+		c.Bind(&params)
+		user := services.CreateUser(
+			params["email"],
+			params["password"],
+			params["nickName"],
+		)
 
-	// Migrate the schema
-	db.AutoMigrate(&models.User{})
-
-	// Create
-	db.Create(&models.User{Email: "jshong0907@gmail.com", NickName: "이름"})
-
-	// Read
-	var user models.User
-	db.First(&user, 1) // find product with integer primary key
-	fmt.Println(user.NickName)
-	db.First(&user, "Email = ?", "jshong0907@gmail.com") // find product with code D42
-
-	// Update - update product's price to 200
-	db.Model(&user).Update("NickName", "홍준식")
-	// Update - update multiple fields
-
-	// Delete - delete product
-	db.Where("email = ?", "jshong0907@gmail.com").Delete(&user)
+		return c.JSON(http.StatusOK, user)
+	})
+	e.Logger.Fatal(e.Start(":1323"))
 }
