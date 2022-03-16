@@ -18,6 +18,7 @@ import (
 )
 
 func main() {
+	// practice.A()
 
 	cfg, _ := config.LoadConfig("config.json")
 
@@ -52,11 +53,12 @@ func main() {
 	router := httprouter.New()
 
 	router.GET("/api/user", ep.GetUserList)
-	router.GET("/api/oauth2", ep.Test)
-	router.POST("/api/signin", ep.Signin)
-	router.GET("/login/oauth2/code/google", ep.Signin)
+	router.GET("/api/oauth2/google", ep.Oauth2Google)
+	// router.POST("/api/signin", ep.Signin)
+	router.GET("/login/oauth2/code/google", ep.CallbackGoogle)
 
 	handler := cors.AllowAll().Handler(router)
-	log.Fatal(http.ListenAndServe(":"+"8000", handler))
+	port := fmt.Sprintf(":%d", cfg.Server.Port)
+	log.Fatal(http.ListenAndServe(port, handler))
 
 }
