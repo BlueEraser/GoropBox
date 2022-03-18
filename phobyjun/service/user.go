@@ -5,12 +5,16 @@ import (
 	"phobyjun/model"
 )
 
-func CreateUser(username string, password string, email string) (*model.User, error) {
-	hashPassword, err := model.HashPassword(password)
+func CreateUser(userDto *model.User) (*model.User, error) {
+	hashPassword, err := userDto.HashPassword(userDto.Password)
 	if err != nil {
 		return nil, err
 	}
-	user := model.User{Username: username, Password: hashPassword, Email: email}
+	user := model.User{
+		Username: userDto.Username,
+		Password: hashPassword,
+		Email:    userDto.Email,
+	}
 	db.Session.Create(&user)
 	return &user, nil
 }

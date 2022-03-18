@@ -2,12 +2,14 @@ package validator
 
 import "github.com/go-playground/validator/v10"
 
-type UserValidator struct {
-	validator *validator.Validate
+var UserValidator *validator.Validate
+
+func init() {
+	UserValidator = validator.New()
 }
 
-func (uv UserValidator) Validate(u interface{}) error {
-	if err := uv.validator.Struct(u); err != nil {
+func UserValidate(user interface{}) error {
+	if err := UserValidator.Struct(user); err != nil {
 		return err.(validator.ValidationErrors)
 	}
 	return nil

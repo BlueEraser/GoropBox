@@ -6,13 +6,13 @@ import (
 
 type User struct {
 	ID       uint   `gorm:"primary_key" json:"id"`
-	Username string `json:"username;unique" validate:"required"`
-	Password string `json:"-" validate:"required"`
-	Email    string `json:"email;unique" validate:"required,email"`
+	Username string `gorm:"unique" json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
+	Email    string `gorm:"unique" json:"email" validate:"required,email"`
 	Files    []File
 }
 
-func HashPassword(password string) (string, error) {
+func (user User) HashPassword(password string) (string, error) {
 	hash, err := scrypt.GenerateFromPassword([]byte(password), scrypt.DefaultParams)
 	return string(hash), err
 }
