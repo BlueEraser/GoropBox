@@ -12,7 +12,7 @@ type Config struct {
 		HOST     string `env:"DATABASE.HOST"`
 		PORT     string `env:"DATABASE.PORT"`
 		DBNAME   string `env:"DATABASE.DBNAME"`
-		USERNAME string `env:"DATABASE.USERNAME"`
+		USER     string `env:"DATABASE.USER"`
 		PASSWORD string `env:"DATABASE.PASSWORD"`
 	}
 }
