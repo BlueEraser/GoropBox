@@ -1,12 +1,13 @@
 package controllers
 
 import (
-	"github.com/golang-jwt/jwt"
-	"gorop-box/models"
-	"gorop-box/services"
 	"net/http"
 	"time"
 
+	"gorop-box/auth"
+	"gorop-box/services"
+
+	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 )
 
@@ -21,7 +22,7 @@ func SignUp(c echo.Context) error {
 		params["nickName"],
 	)
 	if err != nil {
-		return c.String(http.StatusBadRequest, "회원가입 실패!")
+		return c.String(http.StatusBadRequest, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, user)
@@ -35,10 +36,10 @@ func SignIn(c echo.Context) error {
 	user, err := services.CheckPassword(params["email"], params["password"])
 
 	if err != nil {
-		return echo.ErrUnauthorized
+		return c.String(http.StatusBadRequest, err.Error())
 	}
 
-	jwtClaims := models.JwtClaims{
+	jwtClaims := auth.JwtClaims{
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 		},
@@ -49,7 +50,7 @@ func SignIn(c echo.Context) error {
 
 	t, err := token.SignedString([]byte("secret"))
 	if err != nil {
-		return err
+		return c.String(http.StatusBadRequest, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{
@@ -59,7 +60,7 @@ func SignIn(c echo.Context) error {
 
 func GetUserInfo(c echo.Context) error {
 	userJwt := c.Get("user").(*jwt.Token)
-	claims := userJwt.Claims.(*models.JwtClaims)
+	claims := userJwt.Claims.(*auth.JwtClaims)
 	user, _ := services.GetUserByEmail(claims.Email)
 	return c.JSON(http.StatusOK, user)
 }

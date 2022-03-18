@@ -31,7 +31,7 @@ func Connection() (*gorm.DB, error) {
 }
 
 func RunMigrations() {
-	allModels := []interface{}{&models.User{}}
+	allModels := []interface{}{&models.User{}, &models.File{}}
 
 	for _, model := range allModels {
 		DB.AutoMigrate(model)
