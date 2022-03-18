@@ -12,19 +12,26 @@ import (
 
 func SignUp(c echo.Context) error {
 	params := make(map[string]string)
-	c.Bind(&params)
-	user := services.CreateUser(
+	if bindErr := c.Bind(&params); bindErr != nil {
+		return bindErr
+	}
+	user, err := services.CreateUser(
 		params["email"],
 		params["password"],
 		params["nickName"],
 	)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "회원가입 실패!")
+	}
 
 	return c.JSON(http.StatusOK, user)
 }
 
 func SignIn(c echo.Context) error {
 	params := make(map[string]string)
-	c.Bind(&params)
+	if bindErr := c.Bind(&params); bindErr != nil {
+		return bindErr
+	}
 	user, err := services.CheckPassword(params["email"], params["password"])
 
 	if err != nil {
@@ -53,6 +60,6 @@ func SignIn(c echo.Context) error {
 func GetUserInfo(c echo.Context) error {
 	userJwt := c.Get("user").(*jwt.Token)
 	claims := userJwt.Claims.(*models.JwtClaims)
-	user := services.GetUserByEmail(claims.Email)
+	user, _ := services.GetUserByEmail(claims.Email)
 	return c.JSON(http.StatusOK, user)
 }

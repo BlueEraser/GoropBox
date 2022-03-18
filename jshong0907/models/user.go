@@ -12,16 +12,15 @@ type User struct {
 	NickName string `gorm:"not null;comment:닉네임" json:"nickName"`
 }
 
-func (user User) CheckPassword(password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-	return err == nil
+func (user User) CheckPassword(password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 }
 
-func (user *User) SetPassword(password string) bool {
+func (user *User) SetPassword(password string) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err == nil {
 		user.Password = string(hashedPassword)
-		return true
+		return nil
 	}
-	return false
+	return err
 }
