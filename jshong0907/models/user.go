@@ -7,9 +7,10 @@ import (
 
 type User struct {
 	gorm.Model
-	Email    string `gorm:"not null;uniqueIndex;comment:이메일" json:"email"`
-	Password string `gorm:"not null;comment:비밀번호" json:"-"`
-	NickName string `gorm:"not null;comment:닉네임" json:"nickName"`
+	Email    string `gorm:"type:varchar(50);not null;uniqueIndex;comment:이메일" json:"email"`
+	Password string `gorm:"type:varchar(50);not null;comment:비밀번호" json:"-"`
+	NickName string `gorm:"type:varchar(10);not null;comment:닉네임" json:"nickName"`
+	Files    []File `gorm:"constraint:OnDelete:CASCADE"`
 }
 
 func (user User) CheckPassword(password string) error {
