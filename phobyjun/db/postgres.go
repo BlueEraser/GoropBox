@@ -12,7 +12,7 @@ const dsn = "host=localhost user=phobyjun password=password dbname=goropbox port
 var Session *gorm.DB
 var err error
 
-func Init() {
+func init() {
 	Session, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Panic("DB Connection Failed")

@@ -19,7 +19,7 @@ type Config struct {
 
 var Cfg *Config
 
-func Init() {
+func init() {
 	err := godotenv.Load("./config/.env")
 	if err != nil {
 		log.Fatal("Load .env file failed")
