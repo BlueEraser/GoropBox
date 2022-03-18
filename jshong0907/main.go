@@ -1,25 +1,26 @@
 package main
 
 import (
-	"net/http"
-
-	"gorop-box/services"
-
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"gorop-box/controllers"
+	"gorop-box/models"
 )
 
 func main() {
 	e := echo.New()
-	e.POST("/signup", func(c echo.Context) error {
-		params := make(map[string]string)
-		c.Bind(&params)
-		user := services.CreateUser(
-			params["email"],
-			params["password"],
-			params["nickName"],
-		)
+	e.POST("/signup", controllers.SignUp)
+	e.POST("/signin", controllers.SignIn)
 
-		return c.JSON(http.StatusOK, user)
-	})
+	r := e.Group("/restricted")
+
+	// Configure middleware with the custom claims type
+	config := middleware.JWTConfig{
+		Claims:     &models.JwtClaims{},
+		SigningKey: []byte("secret"),
+	}
+	r.Use(middleware.JWTWithConfig(config))
+	r.GET("/user", controllers.GetUserInfo)
+
 	e.Logger.Fatal(e.Start(":1323"))
 }
