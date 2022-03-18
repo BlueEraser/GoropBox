@@ -6,9 +6,9 @@ import (
 
 type User struct {
 	ID       uint   `gorm:"primary_key" json:"id"`
-	Username string `json:"username" validate:"required"`
+	Username string `json:"username;unique" validate:"required"`
 	Password string `json:"-" validate:"required"`
-	Email    string `json:"email" validate:"required,email"`
+	Email    string `json:"email;unique" validate:"required,email"`
 	Files    []File
 }
 
