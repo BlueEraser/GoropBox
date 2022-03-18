@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/golang-jwt/jwt"
-	"gorop-box/models"
+	"gorop-box/auth"
 	"gorop-box/services"
 	"net/http"
 	"time"
@@ -38,7 +38,7 @@ func SignIn(c echo.Context) error {
 		return echo.ErrUnauthorized
 	}
 
-	jwtClaims := models.JwtClaims{
+	jwtClaims := auth.JwtClaims{
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 		},
@@ -59,7 +59,7 @@ func SignIn(c echo.Context) error {
 
 func GetUserInfo(c echo.Context) error {
 	userJwt := c.Get("user").(*jwt.Token)
-	claims := userJwt.Claims.(*models.JwtClaims)
+	claims := userJwt.Claims.(*auth.JwtClaims)
 	user, _ := services.GetUserByEmail(claims.Email)
 	return c.JSON(http.StatusOK, user)
 }
