@@ -1,12 +1,13 @@
 package controllers
 
 import (
-	"github.com/golang-jwt/jwt"
-	"gorop-box/auth"
-	"gorop-box/services"
 	"net/http"
 	"time"
 
+	"gorop-box/auth"
+	"gorop-box/services"
+
+	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 )
 

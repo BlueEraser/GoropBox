@@ -1,4 +1,4 @@
-package errors
+package box_errors
 
 import "fmt"
 
