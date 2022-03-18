@@ -1,6 +1,8 @@
 package services
 
 import (
+	"errors"
+	"gorm.io/gorm"
 	"net/mail"
 
 	"gorop-box/box_errors"
@@ -33,9 +35,12 @@ func GetUserByEmail(email string) (*models.User, error) {
 
 func CheckPassword(email, password string) (*models.User, error) {
 	var user models.User
-	DB.Where("email = ?", email).Find(&user)
+	result := DB.Where("email = ?", email).Take(&user)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil, &box_errors.ValidationError{ErrorMessage: "등록되지 않은 이메일입니다."}
+	}
 	if user.CheckPassword(password) == nil {
 		return &user, nil
 	}
-	return &user, &box_errors.InvalidPasswordError{}
+	return nil, &box_errors.InvalidPasswordError{}
 }
