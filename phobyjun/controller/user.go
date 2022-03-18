@@ -22,7 +22,7 @@ func SignUp(c echo.Context) error {
 
 	user, err := service.CreateUser(userDto)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error)
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	return c.JSON(http.StatusOK, user)
 }

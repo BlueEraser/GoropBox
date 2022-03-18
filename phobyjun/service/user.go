@@ -15,6 +15,9 @@ func CreateUser(userDto *model.User) (*model.User, error) {
 		Password: hashPassword,
 		Email:    userDto.Email,
 	}
-	db.Session.Create(&user)
+	tx := db.Session.Create(&user)
+	if err = tx.Error; err != nil {
+		return nil, err
+	}
 	return &user, nil
 }
