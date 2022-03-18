@@ -12,14 +12,14 @@ type Config struct {
 		HOST     string `env:"DATABASE.HOST"`
 		PORT     string `env:"DATABASE.PORT"`
 		DBNAME   string `env:"DATABASE.DBNAME"`
-		USERNAME string `env:"DATABASE.USERNAME"`
+		USER     string `env:"DATABASE.USER"`
 		PASSWORD string `env:"DATABASE.PASSWORD"`
 	}
 }
 
 var Cfg *Config
 
-func Init() {
+func init() {
 	err := godotenv.Load("./config/.env")
 	if err != nil {
 		log.Fatal("Load .env file failed")
