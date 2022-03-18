@@ -3,7 +3,7 @@ package services
 import (
 	"gorop-box/errors"
 	"gorop-box/models"
-	"regexp"
+	"net/mail"
 )
 
 func CreateUser(email, password, nickName string) (*models.User, error) {
@@ -11,11 +11,8 @@ func CreateUser(email, password, nickName string) (*models.User, error) {
 	if email == "" || password == "" || nickName == "" {
 		return nil, &errors.ValidationError{ErrorMessage: "이메일, 패스워드, 닉네임이 모두 입력되어야합니다."}
 	}
-	matched, regrexErr := regexp.MatchString("[a-zA-Z0-9]@[a-zA-Z0-9].[a-zA-Z]", email)
-	if regrexErr != nil {
-		return nil, regrexErr
-	}
-	if !matched {
+	_, parseErr := mail.ParseAddress(email)
+	if parseErr != nil {
 		return nil, &errors.ValidationError{ErrorMessage: "이메일이 올바르지 않은 형태입니다."}
 	}
 
@@ -36,7 +33,7 @@ func GetUserByEmail(email string) (*models.User, error) {
 func CheckPassword(email, password string) (*models.User, error) {
 	var user models.User
 	DB.Where("email = ?", email).Find(&user)
-	if user.CheckPassword(password) != nil {
+	if user.CheckPassword(password) == nil {
 		return &user, nil
 	}
 	return &user, &errors.InvalidPasswordError{}

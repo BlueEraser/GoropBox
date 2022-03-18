@@ -21,7 +21,7 @@ func SignUp(c echo.Context) error {
 		params["nickName"],
 	)
 	if err != nil {
-		return c.String(http.StatusBadRequest, "회원가입 실패!")
+		return c.String(http.StatusBadRequest, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, user)
@@ -35,7 +35,7 @@ func SignIn(c echo.Context) error {
 	user, err := services.CheckPassword(params["email"], params["password"])
 
 	if err != nil {
-		return echo.ErrUnauthorized
+		return c.String(http.StatusBadRequest, err.Error())
 	}
 
 	jwtClaims := auth.JwtClaims{
@@ -49,7 +49,7 @@ func SignIn(c echo.Context) error {
 
 	t, err := token.SignedString([]byte("secret"))
 	if err != nil {
-		return err
+		return c.String(http.StatusBadRequest, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{

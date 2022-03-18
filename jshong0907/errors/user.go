@@ -5,7 +5,7 @@ import "fmt"
 type InvalidPasswordError struct{}
 
 func (m *InvalidPasswordError) Error() string {
-	return "Invalid Password Error!"
+	return "비밀번호가 일치하지 않습니다."
 }
 
 type ValidationError struct {
