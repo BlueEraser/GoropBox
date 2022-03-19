@@ -1,6 +1,8 @@
 package services
 
 import (
+	"fmt"
+	"github.com/joho/godotenv"
 	"gorop-box/models"
 	"log"
 	"os"
@@ -13,6 +15,10 @@ var DB *gorm.DB
 
 func init() {
 	var err error
+	err = godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	if DB, err = Connection(); err != nil {
 		log.Printf("failed to connect database, got error %v", err)
 		os.Exit(1)
@@ -22,7 +28,12 @@ func init() {
 }
 
 func Connection() (*gorm.DB, error) {
-	dbDSN := "host=127.0.0.1 user=hong dbname=GoropBox"
+	dbDSN := fmt.Sprintf(
+		"host=%s user=%s dbname=%s",
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_NAME"),
+	)
 	db, err := gorm.Open(postgres.Open(dbDSN), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
