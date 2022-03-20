@@ -14,4 +14,5 @@ func setUserRouter(r *echo.Group) {
 	}
 	r.Use(middleware.JWTWithConfig(config))
 	r.GET("/user", controllers.GetUserInfo)
+	r.GET("/file", controllers.UploadFile)
 }
