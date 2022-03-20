@@ -31,3 +31,17 @@ func UploadFile(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, file)
 }
+
+func GetFile(c echo.Context) error {
+	user, jwtErr := auth.GetUserByJwt(c)
+	if jwtErr != nil {
+		return c.String(http.StatusBadRequest, jwtErr.Error())
+	}
+
+	fileName := c.Param("file")
+	file, err := services.GetFile(*user, fileName)
+	if err != nil {
+		return c.String(http.StatusBadRequest, err.Error())
+	}
+	return c.JSON(http.StatusOK, file)
+}

@@ -1,8 +1,11 @@
 package services
 
 import (
+	"errors"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"gorm.io/gorm"
+	"gorop-box/box_errors"
 	"gorop-box/models"
 	"io"
 	"os"
@@ -33,5 +36,14 @@ func CreateFile(user models.User, fileReader io.Reader, fileName string) (*model
 		return nil, err
 	}
 	DB.Create(&file)
+	return &file, nil
+}
+
+func GetFile(user models.User, fileName string) (*models.File, error) {
+	var file models.File
+	result := DB.Where("user_id = ? AND path = ?", user.ID, fileName).Take(&file)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil, &box_errors.ValidationError{ErrorMessage: "등록되지 않은 파일입니다."}
+	}
 	return &file, nil
 }
