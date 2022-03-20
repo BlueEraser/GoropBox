@@ -13,6 +13,8 @@ type User struct {
 	Files    []File `gorm:"constraint:OnDelete:CASCADE"`
 }
 
+// CheckPassword 는 User 의 복호화된 Password 와 파라미터 password 를 비교합니다.
+// password 와 복호화된 Password 가 동일하다면 nil 을, 다르다면 error 를 반환합니다.
 func (user User) CheckPassword(password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 }
