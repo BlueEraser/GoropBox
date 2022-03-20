@@ -13,5 +13,5 @@ func setFileRouter(r *echo.Group) {
 		SigningKey: []byte("secret"),
 	}
 	r.Use(middleware.JWTWithConfig(config))
-	r.POST("/", controllers.UploadFile)
+	r.POST("", controllers.UploadFile)
 }

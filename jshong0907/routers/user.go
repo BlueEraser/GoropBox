@@ -13,5 +13,5 @@ func setUserRouter(r *echo.Group) {
 		SigningKey: []byte("secret"),
 	}
 	r.Use(middleware.JWTWithConfig(config))
-	r.GET("/", controllers.GetUserInfo)
+	r.GET("", controllers.GetUserInfo)
 }

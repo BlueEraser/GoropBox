@@ -9,6 +9,6 @@ func Init(e *echo.Echo) {
 	userGroup := e.Group("/user")
 	setUserRouter(userGroup)
 
-	fileGroup := e.Group("file")
+	fileGroup := e.Group("/file")
 	setFileRouter(fileGroup)
 }
