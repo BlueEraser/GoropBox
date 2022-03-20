@@ -7,11 +7,11 @@ import (
 	"gorop-box/controllers"
 )
 
-func setUserRouter(r *echo.Group) {
+func setFileRouter(r *echo.Group) {
 	config := middleware.JWTConfig{
 		Claims:     &auth.JwtClaims{},
 		SigningKey: []byte("secret"),
 	}
 	r.Use(middleware.JWTWithConfig(config))
-	r.GET("/", controllers.GetUserInfo)
+	r.POST("/", controllers.UploadFile)
 }
