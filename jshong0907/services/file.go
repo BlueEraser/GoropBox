@@ -47,3 +47,12 @@ func GetFile(user models.User, fileName string) (*models.File, error) {
 	}
 	return &file, nil
 }
+
+func DeleteFile(user models.User, fileName string) error {
+	file, err := GetFile(user, fileName)
+	if err != nil {
+		return err
+	}
+	DB.Delete(&file)
+	return nil
+}

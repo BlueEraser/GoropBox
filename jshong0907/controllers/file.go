@@ -45,3 +45,17 @@ func GetFile(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, file)
 }
+
+func DeleteFile(c echo.Context) error {
+	user, jwtErr := auth.GetUserByJwt(c)
+	if jwtErr != nil {
+		return c.String(http.StatusBadRequest, jwtErr.Error())
+	}
+
+	fileName := c.Param("file")
+	err := services.DeleteFile(*user, fileName)
+	if err != nil {
+		return c.String(http.StatusBadRequest, err.Error())
+	}
+	return c.String(http.StatusBadRequest, "파일이 성공적으로 삭제되었습니다.")
+}
