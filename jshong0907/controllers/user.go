@@ -59,8 +59,9 @@ func SignIn(c echo.Context) error {
 }
 
 func GetUserInfo(c echo.Context) error {
-	userJwt := c.Get("user").(*jwt.Token)
-	claims := userJwt.Claims.(*auth.JwtClaims)
-	user, _ := services.GetUserByEmail(claims.Email)
+	user, err := auth.GetUserByJwt(c)
+	if err != nil {
+		return c.String(http.StatusBadRequest, err.Error())
+	}
 	return c.JSON(http.StatusOK, user)
 }
