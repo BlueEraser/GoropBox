@@ -1,16 +1,20 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 
-	"github.com/inhun/GoropBox/config"
+	iconfig "github.com/inhun/GoropBox/config"
 	"github.com/inhun/GoropBox/endpoints"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/julienschmidt/httprouter"
 	"github.com/rs/cors"
 
@@ -20,7 +24,21 @@ import (
 func main() {
 	// practice.A()
 
-	cfg, _ := config.LoadConfig("config.json")
+	cfg, _ := iconfig.LoadConfig("config.json")
+
+	awscfg, err := config.LoadDefaultConfig(context.TODO(),
+		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(cfg.AWS.AccessKey, cfg.AWS.SecretKey, "")),
+		config.WithRegion("ap-northeast-2"),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	client := s3.NewFromConfig(awscfg)
+	output, _ := client.ListBuckets(context.TODO(), &s3.ListBucketsInput{})
+
+	for i, a := range output.Buckets {
+		fmt.Println(i, *a.Name)
+	}
 
 	var OauthConf = &oauth2.Config{
 		ClientID:     cfg.Google.ClientID,

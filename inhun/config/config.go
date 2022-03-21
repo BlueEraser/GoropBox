@@ -26,10 +26,16 @@ type GoogleConfig struct {
 	RedirectUrl  string `json:"redirect_url"`
 }
 
+type AwsConfig struct {
+	AccessKey string `json:"access_key"`
+	SecretKey string `json:"secret_key"`
+}
+
 type Config struct {
 	DB     DBConfig     `json:"db"`
 	Server ServerConfig `json:"server"`
 	Google GoogleConfig `json:"google"`
+	AWS    AwsConfig    `json:"aws"`
 }
 
 func LoadConfig(filepath string) (*Config, error) {
