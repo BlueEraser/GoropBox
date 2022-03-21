@@ -48,3 +48,11 @@ func LogIn(c echo.Context) error {
 
 	return c.NoContent(http.StatusOK)
 }
+
+func LogOut(c echo.Context) error {
+	if err := session.Delete(c); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	return c.NoContent(http.StatusOK)
+}

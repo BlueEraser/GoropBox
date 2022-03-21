@@ -8,4 +8,5 @@ import (
 func setAuthController(e *echo.Echo) {
 	e.POST(APIAuthSignup, controller.SignUp)
 	e.POST(APIAuth, controller.LogIn)
+	e.DELETE(APIAuth, controller.LogOut)
 }

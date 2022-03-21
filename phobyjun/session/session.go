@@ -35,13 +35,14 @@ func Save(c echo.Context, email string) error {
 	return saveSession(c, sess)
 }
 
-func Delete(c echo.Context, email string) error {
+func Delete(c echo.Context) error {
 	sess := Get(c)
 	sess.Options = &sessions.Options{
 		Path:     "/",
 		HttpOnly: true,
 		MaxAge:   -1,
 	}
+	sess.Values["email"] = nil
 	return saveSession(c, sess)
 }
 
