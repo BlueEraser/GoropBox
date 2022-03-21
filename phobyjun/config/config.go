@@ -15,6 +15,9 @@ type Config struct {
 		USER     string `env:"DATABASE.USER"`
 		PASSWORD string `env:"DATABASE.PASSWORD"`
 	}
+	Session struct {
+		SECRET string `env:"SESSION.SECRET"`
+	}
 }
 
 var Cfg *Config
