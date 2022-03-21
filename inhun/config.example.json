@@ -16,5 +16,9 @@
         "auth_url": "{}",
         "token_url": "{}",
         "redirect_url": "{}"
+    },
+    "aws": {
+        "access_key": "{}",
+        "secret_key": "{}"
     }
 }

@@ -11,9 +11,9 @@ import (
 type TokenInfo struct {
 	Sub           string
 	Email         string
-	AtHash        string `mapstructure: "at_hash"`
+	AtHash        string `mapstructure:"at_hash"`
 	Aud           string
-	EmailVerified bool `mapstructure: "email_verified"`
+	EmailVerified bool `mapstructure:"email_verified"`
 	Name          string
 	GivenName     string
 	FamilyName    string

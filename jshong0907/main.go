@@ -1,9 +1,8 @@
 package main
 
 import (
-	"gorop-box/routers"
-
 	"github.com/labstack/echo/v4"
+	"gorop-box/routers"
 )
 
 func main() {

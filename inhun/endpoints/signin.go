@@ -20,7 +20,7 @@ func (e *Endpoints) CallbackGoogle(w http.ResponseWriter, r *http.Request, ps ht
 		log.Fatal(err)
 	}
 
-	fmt.Println(tok.Extra("id_token"))
+	// fmt.Println(tok.Extra("id_token"))
 	a, _ := auth.AuthGoogle(fmt.Sprintf("%v", tok.Extra("id_token")), e.Oauth.ClientID)
 	fmt.Println(a)
 

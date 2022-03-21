@@ -6,6 +6,9 @@ func Init(e *echo.Echo) {
 	authGroup := e.Group("/auth")
 	setAuthRouter(authGroup)
 
-	userGroup := e.Group("/restricted")
+	userGroup := e.Group("/user")
 	setUserRouter(userGroup)
+
+	fileGroup := e.Group("/file")
+	setFileRouter(fileGroup)
 }
