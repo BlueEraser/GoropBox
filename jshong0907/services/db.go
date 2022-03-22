@@ -2,11 +2,12 @@ package services
 
 import (
 	"fmt"
-	"github.com/joho/godotenv"
-	"gorop-box/models"
 	"log"
 	"os"
 
+	"gorop-box/models"
+
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

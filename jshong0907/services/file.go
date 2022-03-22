@@ -2,13 +2,15 @@ package services
 
 import (
 	"errors"
+	"io"
+	"os"
+
+	"gorop-box/box_errors"
+	"gorop-box/models"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"gorm.io/gorm"
-	"gorop-box/box_errors"
-	"gorop-box/models"
-	"io"
-	"os"
 )
 
 func uploadFile(file io.Reader, fileName string) error {
