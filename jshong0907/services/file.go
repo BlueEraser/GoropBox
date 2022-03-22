@@ -12,8 +12,8 @@ import (
 )
 
 func uploadFile(file io.Reader, fileName string) error {
-	Uploader = s3manager.NewUploader(Session)
-	_, err := Uploader.Upload(&s3manager.UploadInput{
+	s3Uploader = s3manager.NewUploader(awsSession)
+	_, err := s3Uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(os.Getenv("AWS_BUCKET")),
 		Key:    aws.String(fileName),
 		Body:   file,
@@ -35,13 +35,13 @@ func CreateFile(user models.User, fileReader io.Reader, fileName string) (*model
 	if err != nil {
 		return nil, err
 	}
-	DB.Create(&file)
+	db.Create(&file)
 	return &file, nil
 }
 
 func GetFile(user models.User, fileName string) (*models.File, error) {
 	var file models.File
-	result := DB.Where("user_id = ? AND path = ?", user.ID, fileName).Take(&file)
+	result := db.Where("user_id = ? AND path = ?", user.ID, fileName).Take(&file)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, &box_errors.ValidationError{ErrorMessage: "등록되지 않은 파일입니다."}
 	}
@@ -53,6 +53,6 @@ func DeleteFile(user models.User, fileName string) error {
 	if err != nil {
 		return err
 	}
-	DB.Delete(&file)
+	db.Delete(&file)
 	return nil
 }

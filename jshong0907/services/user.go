@@ -23,19 +23,19 @@ func CreateUser(email, password, nickName string) (*models.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	DB.Create(&user)
+	db.Create(&user)
 	return &user, nil
 }
 
 func GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
-	DB.Where("email = ?", email).Find(&user)
+	db.Where("email = ?", email).Find(&user)
 	return &user, nil
 }
 
 func CheckPassword(email, password string) (*models.User, error) {
 	var user models.User
-	result := DB.Where("email = ?", email).Take(&user)
+	result := db.Where("email = ?", email).Take(&user)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, &box_errors.ValidationError{ErrorMessage: "등록되지 않은 이메일입니다."}
 	}

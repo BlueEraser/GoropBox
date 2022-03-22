@@ -8,17 +8,17 @@ import (
 	"os"
 )
 
-var Session *session.Session
-var Uploader *s3manager.Uploader
+var awsSession *session.Session
+var s3Uploader *s3manager.Uploader
 
 func init() {
 	var sessionErr error
-	Session, sessionErr = session.NewSession(&aws.Config{
+	awsSession, sessionErr = session.NewSession(&aws.Config{
 		Region: aws.String(os.Getenv("AWS_REGION")),
 	})
 	if sessionErr != nil {
 		log.Fatal("Error Loading AWS session")
 	}
 
-	Uploader = s3manager.NewUploader(Session)
+	s3Uploader = s3manager.NewUploader(awsSession)
 }
