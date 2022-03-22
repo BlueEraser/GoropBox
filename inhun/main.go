@@ -1,61 +1,43 @@
 package main
 
 import (
-	"bytes"
-	"context"
 	"fmt"
 	"log"
 	"net/http"
 
 	iconfig "github.com/inhun/GoropBox/config"
 	"github.com/inhun/GoropBox/endpoints"
+	iauth "github.com/inhun/GoropBox/internal/auth"
 	iaws "github.com/inhun/GoropBox/internal/aws"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/julienschmidt/httprouter"
 	"github.com/rs/cors"
-
-	"golang.org/x/oauth2"
 )
 
 func main() {
-	// practice.A()
-
 	cfg, _ := iconfig.LoadConfig("config.json")
 
-	client, err := iaws.LoadS3Client(cfg.AWS)
+	S3Client, err := iaws.LoadS3Client(cfg.AWS)
 	if err != nil {
 		log.Fatal(err)
 	}
-	/*
-		fmt.Println(client)
-		output, _ := client.ListBuckets(context.TODO(), &s3.ListBucketsInput{})
 
-		for i, a := range output.Buckets {
-			fmt.Println(i, *a.Name)
-		}
+	/*
+		putoutput, err := S3Client.GetObject(context.TODO(), &s3.GetObjectInput{Bucket: aws.String("choicafe"), Key: aws.String("pepsi.jpg")})
+		fmt.Println(&putoutput.Body)
+
+			fmt.Println(client)
+			output, _ := client.ListBuckets(context.TODO(), &s3.ListBucketsInput{})
+
+			for i, a := range output.Buckets {
+				fmt.Println(i, *a.Name)
+			}
 	*/
 
-	output, err := client.PutObject(context.TODO(), &s3.PutObjectInput{Bucket: aws.String("goropbox"), Key: aws.String("config.txt"), Body: bytes.NewBuffer([]byte("example object!")), ContentLength: 15})
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(output)
-
-	var OauthConf = &oauth2.Config{
-		ClientID:     cfg.Google.ClientID,
-		ClientSecret: cfg.Google.ClientSecret,
-		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"},
-		RedirectURL:  cfg.Google.RedirectUrl,
-		Endpoint: oauth2.Endpoint{
-			TokenURL: cfg.Google.TokenUrl,
-			AuthURL:  cfg.Google.AuthUrl,
-		},
-	}
+	OauthConf := iauth.LoadAuthConfig(cfg.Google)
 
 	DBUrl := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d TimeZone=%s", cfg.DB.Host, cfg.DB.User, cfg.DB.Password, cfg.DB.DBName, cfg.DB.Port, cfg.DB.TimeZone)
 
@@ -67,8 +49,9 @@ func main() {
 	defer sqlDB.Close()
 
 	ep := endpoints.Endpoints{
-		DB:    db,
-		Oauth: OauthConf,
+		DB:       db,
+		Oauth:    OauthConf,
+		S3Client: S3Client,
 	}
 
 	// db.AutoMigrate(&models.User{})
@@ -80,6 +63,7 @@ func main() {
 	router.GET("/api/oauth2/google", ep.Oauth2Google)
 	// router.POST("/api/signin", ep.Signin)
 	router.GET("/login/oauth2/code/google", ep.CallbackGoogle)
+	router.POST("/api/file/new", ep.Uploads)
 
 	handler := cors.AllowAll().Handler(router)
 	port := fmt.Sprintf(":%d", cfg.Server.Port)
