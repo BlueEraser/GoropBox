@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"log"
@@ -8,12 +9,12 @@ import (
 
 	iconfig "github.com/inhun/GoropBox/config"
 	"github.com/inhun/GoropBox/endpoints"
+	iaws "github.com/inhun/GoropBox/internal/aws"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/julienschmidt/httprouter"
 	"github.com/rs/cors"
@@ -26,19 +27,24 @@ func main() {
 
 	cfg, _ := iconfig.LoadConfig("config.json")
 
-	awscfg, err := config.LoadDefaultConfig(context.TODO(),
-		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(cfg.AWS.AccessKey, cfg.AWS.SecretKey, "")),
-		config.WithRegion("ap-northeast-2"),
-	)
+	client, err := iaws.LoadS3Client(cfg.AWS)
 	if err != nil {
 		log.Fatal(err)
 	}
-	client := s3.NewFromConfig(awscfg)
-	output, _ := client.ListBuckets(context.TODO(), &s3.ListBucketsInput{})
+	/*
+		fmt.Println(client)
+		output, _ := client.ListBuckets(context.TODO(), &s3.ListBucketsInput{})
 
-	for i, a := range output.Buckets {
-		fmt.Println(i, *a.Name)
+		for i, a := range output.Buckets {
+			fmt.Println(i, *a.Name)
+		}
+	*/
+
+	output, err := client.PutObject(context.TODO(), &s3.PutObjectInput{Bucket: aws.String("goropbox"), Key: aws.String("config.txt"), Body: bytes.NewBuffer([]byte("example object!")), ContentLength: 15})
+	if err != nil {
+		log.Fatal(err)
 	}
+	fmt.Println(output)
 
 	var OauthConf = &oauth2.Config{
 		ClientID:     cfg.Google.ClientID,
