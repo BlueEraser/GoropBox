@@ -60,8 +60,12 @@ func LogOut(c echo.Context) error {
 
 func GetUserInfo(c echo.Context) error {
 	sess := session.Get(c)
-	email := fmt.Sprint(sess.Values["email"])
-	user, err := service.GetUserByEmail(email)
+	email := sess.Values["email"]
+	if email == nil {
+		return echo.NewHTTPError(http.StatusUnauthorized)
+	}
+
+	user, err := service.GetUserByEmail(fmt.Sprint(email))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error)
 	}
