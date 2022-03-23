@@ -4,5 +4,9 @@ const (
 	API           = "/api"
 	APIAuth       = API + "/auth"
 	APIAuthSignup = APIAuth + "/new"
-	APIFile       = API + "/file"
+)
+
+const (
+	APIFile    = API + "/file"
+	APIFilesID = APIFile + "/:id"
 )
