@@ -12,5 +12,6 @@ func UserValidate(user interface{}) error {
 	if err := UserValidator.Struct(user); err != nil {
 		return err.(validator.ValidationErrors)
 	}
+
 	return nil
 }

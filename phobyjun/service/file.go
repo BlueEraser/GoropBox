@@ -15,5 +15,6 @@ func CreateFile(fileDto *model.File, userId uint) (*model.File, error) {
 	if err := tx.Error; err != nil {
 		return nil, err
 	}
+
 	return &file, nil
 }

@@ -24,6 +24,7 @@ func SignUp(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
+
 	return c.JSON(http.StatusOK, user)
 }
 
@@ -68,7 +69,8 @@ func GetUserInfo(c echo.Context) error {
 
 	user, err := service.GetUserByEmail(fmt.Sprint(email))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error)
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
+
 	return c.JSON(http.StatusOK, user)
 }
