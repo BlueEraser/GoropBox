@@ -25,12 +25,13 @@ func Get(c echo.Context) *sessions.Session {
 	return sess
 }
 
-func Save(c echo.Context, email string) error {
+func Save(c echo.Context, userId uint, email string) error {
 	sess := Get(c)
 	sess.Options = &sessions.Options{
 		Path:     "/",
 		HttpOnly: true,
 	}
+	sess.Values["userid"] = userId
 	sess.Values["email"] = email
 	return saveSession(c, sess)
 }
@@ -42,6 +43,7 @@ func Delete(c echo.Context) error {
 		HttpOnly: true,
 		MaxAge:   -1,
 	}
+	sess.Values["userid"] = nil
 	sess.Values["email"] = nil
 	return saveSession(c, sess)
 }

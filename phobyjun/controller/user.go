@@ -43,7 +43,8 @@ func LogIn(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusForbidden, err.Error())
 	}
 
-	if err := session.Save(c, paramEmail); err != nil {
+	userId := user.ID
+	if err := session.Save(c, userId, paramEmail); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
