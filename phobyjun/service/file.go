@@ -19,9 +19,9 @@ func CreateFile(fileDto *model.File, userId uint) (*model.File, error) {
 	return &file, nil
 }
 
-func ListFiles(userId uint) ([]*model.File, error) {
+func ListFilesByUserId(userId uint) ([]*model.File, error) {
 	var files []*model.File
-	tx := db.Session.Where("id = ?", userId).Find(files)
+	tx := db.Session.Where("user_id = ?", userId).Find(&files)
 	if err := tx.Error; err != nil {
 		return nil, err
 	}

@@ -7,4 +7,5 @@ import (
 
 func setFileController(e *echo.Echo) {
 	e.POST(APIFile, controller.UploadFile)
+	e.GET(APIFile, controller.ListFiles)
 }
