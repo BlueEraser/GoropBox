@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"phobyjun/db"
@@ -55,4 +56,14 @@ func LogOut(c echo.Context) error {
 	}
 
 	return c.NoContent(http.StatusOK)
+}
+
+func GetUserInfo(c echo.Context) error {
+	sess := session.Get(c)
+	email := fmt.Sprint(sess.Values["email"])
+	user, err := service.GetUserByEmail(email)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error)
+	}
+	return c.JSON(http.StatusOK, user)
 }
