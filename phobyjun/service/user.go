@@ -19,6 +19,7 @@ func CreateUser(userDto *model.User) (*model.User, error) {
 	if err := tx.Error; err != nil {
 		return nil, err
 	}
+
 	return &user, nil
 }
 
@@ -28,5 +29,6 @@ func GetUserByEmail(email string) (*model.User, error) {
 	if err := tx.Error; err != nil {
 		return nil, err
 	}
+
 	return &user, nil
 }

@@ -24,6 +24,7 @@ func SignUp(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
+
 	return c.JSON(http.StatusOK, user)
 }
 
@@ -43,7 +44,8 @@ func LogIn(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusForbidden, err.Error())
 	}
 
-	if err := session.Save(c, paramEmail); err != nil {
+	userId := user.ID
+	if err := session.Save(c, userId, paramEmail); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
@@ -67,7 +69,8 @@ func GetUserInfo(c echo.Context) error {
 
 	user, err := service.GetUserByEmail(fmt.Sprint(email))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error)
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
+
 	return c.JSON(http.StatusOK, user)
 }

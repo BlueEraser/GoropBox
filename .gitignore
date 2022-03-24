@@ -111,3 +111,6 @@ data_*/
 
 # .env configure ignores
 */.env
+
+# phobyjun / uploaded directory
+*/uploaded
