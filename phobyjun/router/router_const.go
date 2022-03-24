@@ -8,5 +8,5 @@ const (
 
 const (
 	APIFile    = API + "/file"
-	APIFilesID = APIFile + "/:id"
+	APIFilesID = APIFile + "/:fileId"
 )
