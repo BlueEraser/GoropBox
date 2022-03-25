@@ -15,12 +15,12 @@ import (
 type TokenInfo struct {
 	Sub           string
 	Email         string
-	AtHash        string `mapstructure:"at_hash"`
+	Athash        string `mapstructure:"at_hash"`
 	Aud           string
-	EmailVerified bool `mapstructure:"email_verified"`
+	Emailverified bool `mapstructure:"email_verified"`
 	Name          string
-	GivenName     string
-	FamilyName    string
+	Givenname     string `mapstructure:"given_name"`
+	Familyname    string `mapstructure:"family_name"`
 	Picture       string
 	Local         string
 	Iss           string

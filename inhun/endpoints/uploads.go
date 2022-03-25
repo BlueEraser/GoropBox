@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
 	"mime/multipart"
 	"net/http"
 
@@ -63,7 +62,8 @@ func (e *Endpoints) Uploads(w http.ResponseWriter, r *http.Request, ps httproute
 		output, err := e.S3Client.PutObject(context.TODO(), &s3.PutObjectInput{Bucket: aws.String("goropbox"), Key: aws.String(part.FileName()), Body: buf, ContentLength: int64(filesize)})
 		if err != nil {
 			fmt.Println("SIBAL")
-			log.Fatal(err)
+			ihttp.ResponseError(w, 500, err.Error())
+			// log.Fatal(err)
 		}
 		fmt.Println(output)
 
