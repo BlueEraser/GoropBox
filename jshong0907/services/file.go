@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"io"
 	"os"
@@ -48,6 +49,7 @@ func GetFile(user models.User, fileName string) (*models.File, error) {
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, &box_errors.ValidationError{ErrorMessage: "등록되지 않은 파일입니다."}
 	}
+	file.AbsoluteUrl = fmt.Sprintf("%s%s", s3Url, file.Path)
 	return &file, nil
 }
 
