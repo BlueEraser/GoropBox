@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/aws/aws-sdk-go/service/s3"
 	"log"
 	"os"
 
@@ -11,6 +12,7 @@ import (
 
 var awsSession *session.Session
 var s3Uploader *s3manager.Uploader
+var s3Session *s3.S3
 
 func init() {
 	var sessionErr error
@@ -22,4 +24,5 @@ func init() {
 	}
 
 	s3Uploader = s3manager.NewUploader(awsSession)
+	s3Session = s3.New(awsSession)
 }

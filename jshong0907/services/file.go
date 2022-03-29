@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"io"
 	"os"
 
@@ -55,6 +56,22 @@ func DeleteFile(user models.User, fileName string) error {
 	if err != nil {
 		return err
 	}
+
 	db.Delete(&file)
+	_, err = s3Session.DeleteObject(&s3.DeleteObjectInput{
+		Bucket: aws.String(os.Getenv("AWS_BUCKET")),
+		Key:    aws.String(fileName),
+	})
+	if err != nil {
+		return err
+	}
+
+	err = s3Session.WaitUntilObjectNotExists(&s3.HeadObjectInput{
+		Bucket: aws.String(os.Getenv("AWS_BUCKET")),
+		Key:    aws.String(fileName),
+	})
+	if err != nil {
+		return err
+	}
 	return nil
 }
