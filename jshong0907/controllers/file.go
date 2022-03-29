@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"gorop-box/auth"
 	"gorop-box/services"
@@ -24,7 +25,8 @@ func UploadFile(c echo.Context) error {
 	}
 	defer fileSrc.Close()
 
-	file, uploadErr := services.CreateFile(*user, fileSrc, fileForm.Filename)
+	fileName := fmt.Sprintf("%s/%s", c.FormValue("dir"), fileForm.Filename)
+	file, uploadErr := services.CreateFile(*user, fileSrc, fileName)
 	if uploadErr != nil {
 		return c.String(http.StatusBadRequest, uploadErr.Error())
 	}
