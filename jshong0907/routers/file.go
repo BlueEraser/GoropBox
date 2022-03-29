@@ -14,4 +14,8 @@ func setFileRouter(r *echo.Group) {
 	}
 	r.Use(middleware.JWTWithConfig(config))
 	r.POST("", controllers.UploadFile)
+	r.DELETE("", controllers.DeleteAllFiles)
+	r.DELETE("/test", controllers.DeleteAllFilesWithoutGoroutine)
+	r.GET("/:file", controllers.GetFile)
+	r.DELETE("/:file", controllers.DeleteFile)
 }

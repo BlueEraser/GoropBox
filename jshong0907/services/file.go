@@ -1,16 +1,23 @@
 package services
 
 import (
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	"gorop-box/models"
+	"errors"
+	"fmt"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"io"
 	"os"
+
+	"gorop-box/box_errors"
+	"gorop-box/models"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"gorm.io/gorm"
 )
 
 func uploadFile(file io.Reader, fileName string) error {
-	Uploader = s3manager.NewUploader(Session)
-	_, err := Uploader.Upload(&s3manager.UploadInput{
+	s3Uploader = s3manager.NewUploader(awsSession)
+	_, err := s3Uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(os.Getenv("AWS_BUCKET")),
 		Key:    aws.String(fileName),
 		Body:   file,
@@ -32,6 +39,65 @@ func CreateFile(user models.User, fileReader io.Reader, fileName string) (*model
 	if err != nil {
 		return nil, err
 	}
-	DB.Create(&file)
+	db.Create(&file)
 	return &file, nil
+}
+
+func GetFile(user models.User, fileName string) (*models.File, error) {
+	var file models.File
+	result := db.Where("user_id = ? AND path = ?", user.ID, fileName).Take(&file)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil, &box_errors.ValidationError{ErrorMessage: "등록되지 않은 파일입니다."}
+	}
+	file.AbsoluteUrl = fmt.Sprintf("%s%s", s3Url, file.Path)
+	return &file, nil
+}
+
+func DeleteFile(user models.User, fileName string) error {
+	file, err := GetFile(user, fileName)
+	if err != nil {
+		return err
+	}
+
+	db.Delete(&file)
+	_, err = s3Session.DeleteObject(&s3.DeleteObjectInput{
+		Bucket: aws.String(os.Getenv("AWS_BUCKET")),
+		Key:    aws.String(fileName),
+	})
+	if err != nil {
+		return err
+	}
+
+	err = s3Session.WaitUntilObjectNotExists(&s3.HeadObjectInput{
+		Bucket: aws.String(os.Getenv("AWS_BUCKET")),
+		Key:    aws.String(fileName),
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DeleteAllFile(user models.User) error {
+	var files []models.File
+	err := db.Model(user).Association("Files").Find(&files)
+	if err != nil {
+		return err
+	}
+	for _, file := range files {
+		go DeleteFile(user, file.Path)
+	}
+	return nil
+}
+
+func DeleteAllFileWithoutGoroutine(user models.User) error {
+	var files []models.File
+	err := db.Model(user).Association("Files").Find(&files)
+	if err != nil {
+		return err
+	}
+	for _, file := range files {
+		DeleteFile(user, file.Path)
+	}
+	return nil
 }
