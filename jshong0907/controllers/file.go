@@ -61,3 +61,13 @@ func DeleteFile(c echo.Context) error {
 	}
 	return c.String(http.StatusBadRequest, "파일이 성공적으로 삭제되었습니다.")
 }
+
+func DeleteAllFiles(c echo.Context) error {
+	user, jwtErr := auth.GetUserByJwt(c)
+	if jwtErr != nil {
+		return c.String(http.StatusBadRequest, jwtErr.Error())
+	}
+
+	services.DeleteAllFile(*user)
+	return c.String(http.StatusBadRequest, "파일이 성공적으로 삭제되었습니다.")
+}

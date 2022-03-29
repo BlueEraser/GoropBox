@@ -77,3 +77,15 @@ func DeleteFile(user models.User, fileName string) error {
 	}
 	return nil
 }
+
+func DeleteAllFile(user models.User) error {
+	var files []models.File
+	err := db.Model(user).Association("Files").Find(&files)
+	if err != nil {
+		return err
+	}
+	for _, file := range files {
+		go DeleteFile(user, file.Path)
+	}
+	return nil
+}

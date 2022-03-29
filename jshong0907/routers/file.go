@@ -16,4 +16,5 @@ func setFileRouter(r *echo.Group) {
 	r.POST("", controllers.UploadFile)
 	r.GET("/:file", controllers.GetFile)
 	r.DELETE("/:file", controllers.DeleteFile)
+	r.DELETE("", controllers.DeleteAllFiles)
 }
