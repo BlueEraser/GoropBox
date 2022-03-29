@@ -63,6 +63,7 @@ func (e *Endpoints) Uploads(w http.ResponseWriter, r *http.Request, ps httproute
 		if err != nil {
 			fmt.Println("SIBAL")
 			ihttp.ResponseError(w, 500, err.Error())
+			return
 			// log.Fatal(err)
 		}
 		fmt.Println(output)
