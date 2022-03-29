@@ -89,3 +89,15 @@ func DeleteAllFile(user models.User) error {
 	}
 	return nil
 }
+
+func DeleteAllFileWithoutGoroutine(user models.User) error {
+	var files []models.File
+	err := db.Model(user).Association("Files").Find(&files)
+	if err != nil {
+		return err
+	}
+	for _, file := range files {
+		DeleteFile(user, file.Path)
+	}
+	return nil
+}
