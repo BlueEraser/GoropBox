@@ -16,6 +16,7 @@ func (e *Endpoints) CallbackGoogle(w http.ResponseWriter, r *http.Request, ps ht
 
 	ctx := context.Background()
 	tok, err := e.Oauth.Exchange(ctx, code)
+	fmt.Println(tok)
 	if err != nil {
 		log.Fatal(err)
 	}

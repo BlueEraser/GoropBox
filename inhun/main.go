@@ -64,6 +64,7 @@ func main() {
 	// router.POST("/api/signin", ep.Signin)
 	router.GET("/login/oauth2/code/google", ep.CallbackGoogle)
 	router.POST("/api/file/new", ep.Uploads)
+	router.GET("/api/file", ep.Downloads)
 
 	handler := cors.AllowAll().Handler(router)
 	port := fmt.Sprintf(":%d", cfg.Server.Port)
