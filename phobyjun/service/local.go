@@ -14,12 +14,12 @@ const (
 	baseDir = "uploaded"
 )
 
-func UploadFileToLocal(fileDto *model.File, file *multipart.FileHeader) error {
-	src, err := os.Open(file.Filename)
+func UploadFileToLocal(fileDto *model.File, file *multipart.FileHeader) (*model.File, error) {
+	src, err := file.Open()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	defer func(src *os.File) {
+	defer func(src multipart.File) {
 		err := src.Close()
 		if err != nil {
 			log.Fatal(err)
@@ -27,6 +27,8 @@ func UploadFileToLocal(fileDto *model.File, file *multipart.FileHeader) error {
 	}(src)
 
 	encryptedName := encryptFileNameDir(fileDto)
+	fileDto.EncryptedName = encryptedName
+
 	dstDir := strings.Join([]string{
 		baseDir,
 		encryptedName,
@@ -34,7 +36,7 @@ func UploadFileToLocal(fileDto *model.File, file *multipart.FileHeader) error {
 
 	dst, err := os.Create(dstDir)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer func(dst *os.File) {
 		err := dst.Close()
@@ -44,10 +46,10 @@ func UploadFileToLocal(fileDto *model.File, file *multipart.FileHeader) error {
 	}(dst)
 
 	if _, err := io.Copy(dst, src); err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return fileDto, nil
 }
 
 func encryptFileNameDir(fileDto *model.File) string {

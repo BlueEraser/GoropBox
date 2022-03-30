@@ -7,9 +7,10 @@ import (
 
 func CreateFile(fileDto *model.File, userId uint) (*model.File, error) {
 	file := model.File{
-		FileName:    fileDto.FileName,
-		FileNameDir: fileDto.FileNameDir,
-		UserID:      userId,
+		FileName:      fileDto.FileName,
+		FileNameDir:   fileDto.FileNameDir,
+		EncryptedName: fileDto.EncryptedName,
+		UserID:        userId,
 	}
 	tx := db.Session.Create(&file)
 	if err := tx.Error; err != nil {

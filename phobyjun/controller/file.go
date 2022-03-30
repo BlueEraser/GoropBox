@@ -20,7 +20,8 @@ func UploadFile(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	if err := service.UploadFileToLocal(fileDto, formFile); err != nil {
+	fileDto, err = service.UploadFileToLocal(fileDto, formFile)
+	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
