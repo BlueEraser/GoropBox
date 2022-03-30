@@ -20,15 +20,16 @@ func UploadFile(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	fileDto, err = service.UploadFileToLocal(fileDto, formFile)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-
 	sess := session.Get(c)
 	userId := sess.Values["userid"]
 	if userId == nil {
 		return echo.NewHTTPError(http.StatusUnauthorized)
+	}
+
+	aesKey, hmacKey, err := service.GetKeysFromUserById(userId.(uint))
+	fileDto, err = service.UploadFileToLocal(fileDto, formFile, aesKey, hmacKey)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
 	file, err := service.CreateFile(fileDto, userId.(uint))

@@ -19,10 +19,11 @@ const (
 	baseDir    = "uploaded"
 	bufferSize = 16 * 1024
 	ivSize     = 16
+	V1         = 0x1
 	hmacSize   = sha512.Size
 )
 
-func UploadFileToLocal(fileDto *model.File, file *multipart.FileHeader) (*model.File, error) {
+func UploadFileToLocal(fileDto *model.File, file *multipart.FileHeader, aesKey, hmacKey []byte) (*model.File, error) {
 	src, err := file.Open()
 	if err != nil {
 		return nil, err
@@ -53,7 +54,7 @@ func UploadFileToLocal(fileDto *model.File, file *multipart.FileHeader) (*model.
 		}
 	}(dst)
 
-	if _, err := io.Copy(dst, src); err != nil {
+	if err := encryptFile(src, dst, aesKey, hmacKey); err != nil {
 		return nil, err
 	}
 
@@ -80,6 +81,11 @@ func encryptFile(src io.Reader, dst io.Writer, aesKey, hmacKey []byte) error {
 
 	ctr := cipher.NewCTR(AES, iv)
 	HMAC := hmac.New(sha512.New, hmacKey)
+
+	_, err = dst.Write([]byte{V1})
+	if err != nil {
+		return err
+	}
 
 	writer := io.MultiWriter(dst, HMAC)
 
