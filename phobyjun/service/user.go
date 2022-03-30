@@ -10,10 +10,21 @@ func CreateUser(userDto *model.User) (*model.User, error) {
 	if err != nil {
 		return nil, err
 	}
+	aesKey, err := userDto.Generate32ByteKey()
+	if err != nil {
+		return nil, err
+	}
+	hmacKey, err := userDto.Generate32ByteKey()
+	if err != nil {
+		return nil, err
+	}
+
 	user := model.User{
 		Username: userDto.Username,
 		Password: hashPassword,
 		Email:    userDto.Email,
+		AesKey:   aesKey,
+		HmacKey:  hmacKey,
 	}
 	tx := db.Session.Create(&user)
 	if err := tx.Error; err != nil {
