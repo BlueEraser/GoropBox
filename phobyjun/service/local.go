@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/base64"
 	"io"
+	"log"
 	"mime/multipart"
 	"os"
 	"phobyjun/model"
@@ -18,7 +19,12 @@ func UploadFileToLocal(fileDto *model.File, file *multipart.FileHeader) error {
 	if err != nil {
 		return err
 	}
-	defer src.Close()
+	defer func(src *os.File) {
+		err := src.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(src)
 
 	encryptedName := encryptFileNameDir(fileDto)
 	dstDir := strings.Join([]string{
@@ -30,7 +36,12 @@ func UploadFileToLocal(fileDto *model.File, file *multipart.FileHeader) error {
 	if err != nil {
 		return err
 	}
-	defer dst.Close()
+	defer func(dst *os.File) {
+		err := dst.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(dst)
 
 	if _, err := io.Copy(dst, src); err != nil {
 		return err
