@@ -10,10 +10,21 @@ func CreateUser(userDto *model.User) (*model.User, error) {
 	if err != nil {
 		return nil, err
 	}
+	aesKey, err := userDto.Generate32ByteKey()
+	if err != nil {
+		return nil, err
+	}
+	hmacKey, err := userDto.Generate32ByteKey()
+	if err != nil {
+		return nil, err
+	}
+
 	user := model.User{
 		Username: userDto.Username,
 		Password: hashPassword,
 		Email:    userDto.Email,
+		AesKey:   aesKey,
+		HmacKey:  hmacKey,
 	}
 	tx := db.Session.Create(&user)
 	if err := tx.Error; err != nil {
@@ -31,4 +42,22 @@ func GetUserByEmail(email string) (*model.User, error) {
 	}
 
 	return &user, nil
+}
+
+func GetUserByID(userId uint) (*model.User, error) {
+	var user model.User
+	tx := db.Session.Where("id = ?", userId).First(&user)
+	if err := tx.Error; err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func GetKeysFromUserById(userId uint) ([]byte, []byte, error) {
+	user, err := GetUserByID(userId)
+	if err != nil {
+		return nil, nil, err
+	}
+	return user.AesKey, user.HmacKey, nil
 }

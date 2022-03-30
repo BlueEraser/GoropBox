@@ -10,6 +10,7 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/labstack/echo-contrib v0.12.0
 	github.com/labstack/echo/v4 v4.6.3
+	github.com/pkg/errors v0.9.1
 	gorm.io/driver/postgres v1.3.1
 	gorm.io/gorm v1.23.2
 )

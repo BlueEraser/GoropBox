@@ -1,11 +1,13 @@
 package router
 
 import (
-	"github.com/labstack/echo/v4"
 	"phobyjun/controller"
+
+	"github.com/labstack/echo/v4"
 )
 
 func setFileController(e *echo.Echo) {
 	e.POST(APIFile, controller.UploadFile)
 	e.GET(APIFile, controller.ListFiles)
+	e.GET(APIFilesID, controller.DownloadFile)
 }
