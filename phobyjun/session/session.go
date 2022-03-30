@@ -1,11 +1,12 @@
 package session
 
 import (
+	"net/http"
+	"phobyjun/config"
+
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
-	"net/http"
-	"phobyjun/config"
 )
 
 var (

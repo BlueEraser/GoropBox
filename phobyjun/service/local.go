@@ -39,7 +39,7 @@ func UploadFileToLocal(fileDto *model.File, file *multipart.FileHeader) error {
 }
 
 func parseFileDir(fileDto *model.File) string {
-	fileDir := fileDto.FileDir
+	fileDir := fileDto.FileNameDir
 	fileName := fileDto.FileName
 
 	dirWithName := fileDir + fileName

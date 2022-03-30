@@ -1,17 +1,18 @@
 package controller
 
 import (
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"phobyjun/model"
 	"phobyjun/service"
 	"phobyjun/session"
+
+	"github.com/labstack/echo/v4"
 )
 
 func UploadFile(c echo.Context) error {
 	fileDto := &model.File{
-		FileName: c.FormValue("fileName"),
-		FileDir:  c.FormValue("fileDir"),
+		FileName:    c.FormValue("fileName"),
+		FileNameDir: c.FormValue("fileDir"),
 	}
 
 	formFile, err := c.FormFile("file")

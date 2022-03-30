@@ -2,13 +2,14 @@ package controller
 
 import (
 	"fmt"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"phobyjun/db"
 	"phobyjun/model"
 	"phobyjun/model/validator"
 	"phobyjun/service"
 	"phobyjun/session"
+
+	"github.com/labstack/echo/v4"
 )
 
 func SignUp(c echo.Context) error {
