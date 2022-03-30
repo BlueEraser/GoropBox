@@ -1,6 +1,11 @@
 package service
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/hmac"
+	"crypto/rand"
+	"crypto/sha512"
 	"encoding/base64"
 	"io"
 	"log"
@@ -11,7 +16,10 @@ import (
 )
 
 const (
-	baseDir = "uploaded"
+	baseDir    = "uploaded"
+	bufferSize = 16 * 1024
+	ivSize     = 16
+	hmacSize   = sha512.Size
 )
 
 func UploadFileToLocal(fileDto *model.File, file *multipart.FileHeader) (*model.File, error) {
@@ -56,4 +64,51 @@ func encryptFileNameDir(fileDto *model.File) string {
 	fileNameDir := fileDto.FileNameDir
 
 	return base64.StdEncoding.EncodeToString([]byte(fileNameDir))
+}
+
+func encryptFile(src io.Reader, dst io.Writer, aesKey, hmacKey []byte) error {
+	iv := make([]byte, ivSize)
+	_, err := rand.Read(iv)
+	if err != nil {
+		return err
+	}
+
+	AES, err := aes.NewCipher(aesKey)
+	if err != nil {
+		return err
+	}
+
+	ctr := cipher.NewCTR(AES, iv)
+	HMAC := hmac.New(sha512.New, hmacKey)
+
+	writer := io.MultiWriter(dst, HMAC)
+
+	_, err = writer.Write(iv)
+	if err != nil {
+		return err
+	}
+
+	buffer := make([]byte, bufferSize)
+	for {
+		n, err := src.Read(buffer)
+		if err != nil && err != io.EOF {
+			return err
+		}
+
+		if n != 0 {
+			outBuffer := make([]byte, n)
+			ctr.XORKeyStream(outBuffer, buffer[:n])
+			_, err := writer.Write(outBuffer)
+			if err != nil {
+				return err
+			}
+		}
+
+		if err == io.EOF {
+			break
+		}
+	}
+
+	_, err = dst.Write(HMAC.Sum(nil))
+	return err
 }
