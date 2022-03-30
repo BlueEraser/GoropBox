@@ -35,11 +35,21 @@ func CreateUser(userDto *model.User) (*model.User, error) {
 }
 
 func GetUserByEmail(email string) (*model.User, error) {
-	var user model.User
-	tx := db.Session.Where("email = ?", email).First(&user)
+	var user *model.User
+	tx := db.Session.Where("email = ?", email).First(user)
 	if err := tx.Error; err != nil {
 		return nil, err
 	}
 
-	return &user, nil
+	return user, nil
+}
+
+func GetUserByID(userId uint) (*model.User, error) {
+	var user *model.User
+	tx := db.Session.Where("id = ?", userId).First(user)
+	if err := tx.Error; err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
