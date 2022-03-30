@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/base64"
 	"io"
 	"mime/multipart"
 	"os"
@@ -13,16 +14,16 @@ const (
 )
 
 func UploadFileToLocal(fileDto *model.File, file *multipart.FileHeader) error {
-	src, err := file.Open()
+	src, err := os.Open(file.Filename)
 	if err != nil {
 		return err
 	}
 	defer src.Close()
 
-	parsedDir := parseFileDir(fileDto)
+	encryptedName := encryptFileNameDir(fileDto)
 	dstDir := strings.Join([]string{
 		baseDir,
-		parsedDir,
+		encryptedName,
 	}, "/")
 
 	dst, err := os.Create(dstDir)
@@ -38,12 +39,8 @@ func UploadFileToLocal(fileDto *model.File, file *multipart.FileHeader) error {
 	return nil
 }
 
-func parseFileDir(fileDto *model.File) string {
-	fileDir := fileDto.FileNameDir
-	fileName := fileDto.FileName
+func encryptFileNameDir(fileDto *model.File) string {
+	fileNameDir := fileDto.FileNameDir
 
-	dirWithName := fileDir + fileName
-	parsedDir := strings.ReplaceAll(dirWithName, "/", "@")
-
-	return parsedDir
+	return base64.StdEncoding.EncodeToString([]byte(fileNameDir))
 }

@@ -12,7 +12,7 @@ import (
 func UploadFile(c echo.Context) error {
 	fileDto := &model.File{
 		FileName:    c.FormValue("fileName"),
-		FileNameDir: c.FormValue("fileDir"),
+		FileNameDir: c.FormValue("fileNameDir"),
 	}
 
 	formFile, err := c.FormFile("file")
