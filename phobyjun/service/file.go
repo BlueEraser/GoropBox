@@ -29,3 +29,13 @@ func ListFilesByUserId(userId uint) ([]*model.File, error) {
 
 	return files, nil
 }
+
+func GetFileByFileId(fileId uint) (*model.File, error) {
+	var file model.File
+	tx := db.Session.Where("id = ?", fileId).First(&file)
+	if err := tx.Error; err != nil {
+		return nil, err
+	}
+
+	return &file, nil
+}
